@@ -130,25 +130,27 @@ def main():
         logging.critical('Ошибка обращения к боту')
         raise Exception('Ошибка обращения к боту')
     timestamp = int(time.time())
-    cache = {'last_response': 0, 'last_error': 0}
+    #cache = {'last_response': 0, 'last_error': 0}
+    last_response = 0
+    last_error = 0
     while True:
         try:
             response = get_api_answer(timestamp)
             homework = check_response(response)
-            if cache['last_response'] != homework:
+            if last_response != homework:
                 try:
                     message = parse_status(homework)
                 except TypeError:
                     message = 'Работа еще не принята на проверку'
                 send_message(bot, message)
-                cache['last_response'] = homework
+                last_response = homework
             logging.debug('Статус ответа не изменился')
         except Exception as error:
             message = f'Сбой в работе программы: {error}'
             logging.info(f'{message}')
-            if cache['last_error'] != f'{error}':
+            if last_error != error:
                 send_message(bot, message)
-                cache['last_error'] = f'{error}'
+                last_error = error
         timestamp = response.get('current_date')
         time.sleep(RETRY_PERIOD)
 
