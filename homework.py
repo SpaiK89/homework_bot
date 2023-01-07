@@ -95,7 +95,7 @@ def check_response(response):
         logging.error('Тип значения ключа "homeworks" не соответствует '
                       'ожидаемому')
         raise TypeError('Тип значения ключа "homeworks" не соответствует '
-                        'ожидаемому'
+                        'ожидаемому')
     if len(response['homeworks']) == 0:
         logging.error('Список домашних работ пуст')
         raise IndexError('Список домашних работ пуст')
