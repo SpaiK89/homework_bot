@@ -98,7 +98,7 @@ def check_response(response):
                         'ожидаемому'
     if len(response['homeworks']) == 0:
         logging.error('Список домашних работ пуст')
-    raise IndexError('Список домашних работ пуст')
+        raise IndexError('Список домашних работ пуст')
     logging.info('Обновлен статус домашней работы')
     homeworks = response.get('homeworks')
     if homeworks:
