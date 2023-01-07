@@ -96,10 +96,6 @@ def check_response(response):
                       'ожидаемому')
         raise TypeError('Тип значения ключа "homeworks" не соответствует '
                         'ожидаемому')
-    if len(response['homeworks']) == 0:
-        logging.error('Список домашних работ пуст')
-        raise IndexError('Список домашних работ пуст')
-    logging.info('Обновлен статус домашней работы')
     homeworks = response.get('homeworks')
     if homeworks:
         return homeworks[0]
@@ -113,14 +109,13 @@ def parse_status(homework):
     if 'status' not in homework:
         logging.error('В ответе API отсутствует ключ "status"')
         raise KeyError('В ответе API отсутствует ключ "status"')
-    homework_status = homework.get('status')
-    if homework_status not in HOMEWORK_VERDICTS:
+    if homework['status'] not in HOMEWORK_VERDICTS:
         logging.error(
             f'Статус "{homework["status"]}" в ответе API '
             f'не соответствует ожидаемым')
         raise Exception(f'Статус "{homework["status"]}" в ответе API '
                         'не соответствует ожидаемым')
-    verdict = HOMEWORK_VERDICTS[homework_status]
+    verdict = HOMEWORK_VERDICTS[homework['status']]
     logging.info('Обновлен статус домашней работы')
     return ('Изменился статус проверки работы '
             f'"{homework["homework_name"]}". {verdict}')
@@ -131,9 +126,6 @@ def main():
     if not check_tokens():
         exit(logging.critical('Программа принудительно остановлена.'))
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
-    if not bot:
-        logging.critical('Ошибка обращения к боту')
-        raise Exception('Ошибка обращения к боту')
     timestamp = int(time.time())
     cache = {'last_response': 0, 'last_error': 0}
     while True:
