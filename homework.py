@@ -113,13 +113,14 @@ def parse_status(homework):
     if 'status' not in homework:
         logging.error('В ответе API отсутствует ключ "status"')
         raise KeyError('В ответе API отсутствует ключ "status"')
-    if homework['status'] not in HOMEWORK_VERDICTS:
+    homework_status = homework.get('status')
+    if homework_status not in HOMEWORK_VERDICTS:
         logging.error(
             f'Статус "{homework["status"]}" в ответе API '
             f'не соответствует ожидаемым')
         raise Exception(f'Статус "{homework["status"]}" в ответе API '
                         'не соответствует ожидаемым')
-    verdict = HOMEWORK_VERDICTS["homework['status']"]
+    verdict = HOMEWORK_VERDICTS[homework_status]
     logging.info('Обновлен статус домашней работы')
     return ('Изменился статус проверки работы '
             f'"{homework["homework_name"]}". {verdict}')
