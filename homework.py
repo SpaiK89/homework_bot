@@ -130,7 +130,7 @@ def main():
         logging.critical('Ошибка обращения к боту')
         raise Exception('Ошибка обращения к боту')
     timestamp = int(time.time())
-    #cache = {'last_response': 0, 'last_error': 0}
+    # cache = {'last_response': 0, 'last_error': 0}
     last_response = 0
     last_error = 0
     while True:
