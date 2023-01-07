@@ -95,7 +95,11 @@ def check_response(response):
         logging.error('Тип значения ключа "homeworks" не соответствует '
                       'ожидаемому')
         raise TypeError('Тип значения ключа "homeworks" не соответствует '
-                        'ожидаемому')
+                        'ожидаемому'
+    if len(response['homeworks']) == 0:
+        logging.error('Список домашних работ пуст')
+    raise IndexError('Список домашних работ пуст')
+    logging.info('Обновлен статус домашней работы')
     homeworks = response.get('homeworks')
     if homeworks:
         return homeworks[0]
@@ -115,7 +119,7 @@ def parse_status(homework):
             f'не соответствует ожидаемым')
         raise Exception(f'Статус "{homework["status"]}" в ответе API '
                         'не соответствует ожидаемым')
-    verdict = HOMEWORK_VERDICTS[homework['status']]
+    verdict = HOMEWORK_VERDICTS["homework['status']"]
     logging.info('Обновлен статус домашней работы')
     return ('Изменился статус проверки работы '
             f'"{homework["homework_name"]}". {verdict}')
@@ -130,27 +134,25 @@ def main():
         logging.critical('Ошибка обращения к боту')
         raise Exception('Ошибка обращения к боту')
     timestamp = int(time.time())
-    # cache = {'last_response': 0, 'last_error': 0}
-    last_response = 0
-    last_error = 0
+    cache = {'last_response': 0, 'last_error': 0}
     while True:
         try:
             response = get_api_answer(timestamp)
             homework = check_response(response)
-            if last_response != homework:
+            if cache['last_response'] != homework:
                 try:
                     message = parse_status(homework)
                 except TypeError:
                     message = 'Работа еще не принята на проверку'
                 send_message(bot, message)
-                last_response = homework
+                cache['last_response'] = homework
             logging.debug('Статус ответа не изменился')
         except Exception as error:
             message = f'Сбой в работе программы: {error}'
             logging.info(f'{message}')
-            if last_error != error:
+            if cache['last_error'] != f'{error}':
                 send_message(bot, message)
-                last_error = error
+                cache['last_error'] = f'{error}'
         timestamp = response.get('current_date')
         time.sleep(RETRY_PERIOD)
 
