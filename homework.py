@@ -138,9 +138,7 @@ def main():
             if cache['last_response'] != homework:
                 try:
                     message = parse_status(homework)
-                # except TypeError:
-                #     message = 'Работа еще не принята на проверку'
-                except SystemExit:
+                except TypeError:
                     message = 'Работа еще не принята на проверку'
                 send_message(bot, message)
                 cache['last_response'] = homework
