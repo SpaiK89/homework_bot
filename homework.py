@@ -140,6 +140,8 @@ def main():
                     message = parse_status(homework)
                 except TypeError:
                     message = 'Работа еще не принята на проверку'
+                except SystemExit:
+                    message = 'Работа еще не принята на проверку'
                 send_message(bot, message)
                 cache['last_response'] = homework
             logging.debug('Статус ответа не изменился')
