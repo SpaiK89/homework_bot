@@ -35,7 +35,6 @@ def check_tokens():
         'PRACTICUM_TOKEN': PRACTICUM_TOKEN,
         'TELEGRAM_TOKEN': TELEGRAM_TOKEN,
         'TELEGRAM_CHAT_ID': TELEGRAM_CHAT_ID,
-        'HEADERS': HEADERS['Authorization']
     }
     for index, token in tokens_dict.items():
         if token is None:
