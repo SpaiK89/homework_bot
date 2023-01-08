@@ -37,7 +37,7 @@ def check_tokens():
         'TELEGRAM_CHAT_ID': TELEGRAM_CHAT_ID,
     }
     for index, token in tokens_dict.items():
-        if token is None:
+        if token == '':
             logging.critical(
                 'Ошибка доступности переменных окружения к основному API: '
                 f'"{index}". Программа принудительно остановлена.'
