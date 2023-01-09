@@ -26,25 +26,8 @@ HOMEWORK_VERDICTS = {
 
 def check_tokens():
     """Проверка доступности переменных окружения."""
-<<<<<<< HEAD
     tokens_list = (PRACTICUM_TOKEN, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID)
     return all(tokens_list)
-=======
-    tokens_dict = {
-        'PRACTICUM_TOKEN': PRACTICUM_TOKEN,
-        'TELEGRAM_TOKEN': TELEGRAM_TOKEN,
-        'TELEGRAM_CHAT_ID': TELEGRAM_CHAT_ID,
-    }
-    for index, token in tokens_dict.items():
-        if token == '':
-            logging.critical(
-                'Ошибка доступности переменных окружения к основному API: '
-                f'"{index}". Программа принудительно остановлена.'
-            )
-            return False
-    logging.info('Проверка переменных окружения прошла успешно.')
-    return True
->>>>>>> b02e2bfdddb9be23c7749775582984ef5cbf35d3
 
 
 def send_message(bot, message):
