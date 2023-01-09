@@ -8,11 +8,6 @@ from dotenv import load_dotenv
 import telegram
 
 load_dotenv()
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s, %(levelname)s, %(name)s, %(message)s',
-    handlers=[logging.StreamHandler(stream=sys.stdout)]
-)
 
 PRACTICUM_TOKEN = os.getenv('PRACTICUM_TOKEN')
 TELEGRAM_TOKEN = os.getenv('TELEGRAM_TOKEN')
@@ -31,21 +26,8 @@ HOMEWORK_VERDICTS = {
 
 def check_tokens():
     """Проверка доступности переменных окружения."""
-    tokens_dict = {
-        'PRACTICUM_TOKEN': PRACTICUM_TOKEN,
-        'TELEGRAM_TOKEN': TELEGRAM_TOKEN,
-        'TELEGRAM_CHAT_ID': TELEGRAM_CHAT_ID,
-        'HEADERS': HEADERS['Authorization']
-    }
-    for index, token in tokens_dict.items():
-        if token is None:
-            logging.critical(
-                'Ошибка доступности переменных окружения к основному API: '
-                f'"{index}". Программа принудительно остановлена.'
-            )
-            return False
-    logging.info('Проверка переменных окружения прошла успешно.')
-    return True
+    tokens_list = (PRACTICUM_TOKEN, TELEGRAM_TOKEN, TELEGRAM_CHAT_ID)
+    return all(tokens_list)
 
 
 def send_message(bot, message):
@@ -83,7 +65,7 @@ def get_api_answer(timestamp):
 
 def check_response(response):
     """Проверка ответа API на соответствие документации."""
-    if type(response) is not dict or not response:
+    if not isinstance(response, dict) or not response:
         logging.error('Ответ API не соответствет ожиданиям')
         raise TypeError('Ответ API не соответствет ожиданиям')
     if 'homeworks' not in response:
@@ -91,7 +73,7 @@ def check_response(response):
                       ' "homeworks"')
         raise TypeError('В ответе API отсутствует список домашних работ '
                         'с ключом "homeworks"')
-    if type(response['homeworks']) is not list:
+    if not isinstance(response['homeworks'], list):
         logging.error('Тип значения ключа "homeworks" не соответствует '
                       'ожидаемому')
         raise TypeError('Тип значения ключа "homeworks" не соответствует '
@@ -124,7 +106,13 @@ def parse_status(homework):
 def main():
     """Основная логика работы бота."""
     if not check_tokens():
-        exit(logging.critical('Программа принудительно остановлена.'))
+        exit(
+            logging.critical(
+                'Ошибка доступности переменных окружения к основному API. '
+                'Программа принудительно остановлена.'
+            )
+        )
+    logging.info('Проверка переменных окружения прошла успешно.')
     bot = telegram.Bot(token=TELEGRAM_TOKEN)
     timestamp = int(time.time())
     cache = {'last_response': 0, 'last_error': 0}
@@ -146,9 +134,15 @@ def main():
             if cache['last_error'] != f'{error}':
                 send_message(bot, message)
                 cache['last_error'] = f'{error}'
-        timestamp = response.get('current_date')
-        time.sleep(RETRY_PERIOD)
+        finally:
+            timestamp = response.get('current_date')
+            time.sleep(RETRY_PERIOD)
 
 
 if __name__ == '__main__':
+    logging.basicConfig(
+        level=logging.INFO,
+        format='%(asctime)s, %(levelname)s, %(name)s, %(message)s',
+        handlers=[logging.StreamHandler(stream=sys.stdout)]
+    )
     main()
