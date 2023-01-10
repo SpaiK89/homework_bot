@@ -45,5 +45,4 @@ homework.py
 ```
 
 ### Разработчик проекта
-- Богомолов Игорь
-- https://github.com/SpaiK89
+- [Богомолов Игорь](https://github.com/SpaiK89)
